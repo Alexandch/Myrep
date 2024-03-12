@@ -1,7 +1,8 @@
-﻿using Club58_Bot;
+using Club58_Bot;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 internal class Program
 {
@@ -17,7 +18,19 @@ internal class Program
             var message = update.Message;
             if (message.Text.ToLower() == "/start")
             {
-                await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
+                var keyboard = new InlineKeyboardMarkup(new[]
+                {
+                    new[] // first row
+                    {
+                        InlineKeyboardButton.WithCallbackData("Показать ивенты", "show_events"),
+                    }
+                });
+
+                await botClient.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: "Добро пожаловать на борт, добрый путник!",
+                    replyMarkup: keyboard
+                );
                 return;
             }
 
@@ -31,6 +44,18 @@ internal class Program
             }
 
             await botClient.SendTextMessageAsync(message.Chat, "Привет-привет!!");
+        }
+        else if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
+        {
+            var callbackQuery = update.CallbackQuery;
+
+            if (callbackQuery.Data == "show_events")
+            {
+                var service = new MockClubEventService();
+                var events = service.GetEvents();
+                var eventNames = string.Join(", ", events.Select(e => e.Name));
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat, $"События: {eventNames}");
+            }
         }
     }
 
