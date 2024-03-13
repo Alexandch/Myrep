@@ -1,8 +1,6 @@
-﻿using Club58Bot;
-
-namespace Club58_Bot;
+namespace Club58Bot;
 
 public interface IClubEventService
 {
-    List<Event> GetEvents();
+    IEnumerable<ClubEvent> GetEvents();
 }
