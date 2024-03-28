@@ -24,13 +24,13 @@ public class UpdateHandlers
 #pragma warning restore RCS1163 // Unused parameter.
 #pragma warning restore IDE0060 // Remove unused parameter
     {
-        var ErrorMessage = exception switch
+        var errorMessage = exception switch
         {
             ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
             _                                       => exception.ToString()
         };
 
-        _logger.LogInformation("HandleError: {ErrorMessage}", ErrorMessage);
+        _logger.LogInformation("HandleError: {ErrorMessage}", errorMessage);
         return Task.CompletedTask;
     }
 
@@ -158,7 +158,7 @@ public class UpdateHandlers
 
         static async Task<Message> RequestContactAndLocation(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
-            ReplyKeyboardMarkup RequestReplyKeyboard = new(
+            ReplyKeyboardMarkup requestReplyKeyboard = new(
                 new[]
                 {
                     KeyboardButton.WithRequestLocation("Location"),
@@ -168,7 +168,7 @@ public class UpdateHandlers
             return await botClient.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: "Who or Where are you?",
-                replyMarkup: RequestReplyKeyboard,
+                replyMarkup: requestReplyKeyboard,
                 cancellationToken: cancellationToken);
         }
 
